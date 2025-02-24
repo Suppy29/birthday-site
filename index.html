@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Special Thanks! 🎉</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            text-align: center;
+            font-family: Arial;
+            overflow: hidden;
+        }
+        .hidden { opacity: 0; transform: translateY(20px); }
+        .heart { 
+            position: absolute;
+            animation: float 3s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+    </style>
+</head>
+<body>
+    <div id="content">
+        <h1 class="hidden">🎂 Thank You All! 🎂</h1>
+        <p class="hidden">Your wishes made my birthday special!</p>
+        <div id="names"></div>
+        <button onclick="startSurprise()" class="hidden">Click for Magic! ✨</button>
+    </div>
+
+    <script>
+        // Animated entrance
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.hidden').forEach(el => {
+                    el.style.opacity = 1;
+                    el.style.transform = 'translateY(0)';
+                });
+            }, 1000);
+        });
+
+        // Confetti surprise
+        function startSurprise() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 } };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            
+            // Add floating hearts
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = '❤️';
+                heart.className = 'heart';
+                heart.style.left = Math.random() * 100 + '%';
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 3000);
+            }, 300);
+        }
+
+        // Add names (customize these)
+        const names = ['Bestie 1', 'Bestie 2', 'Family', 'Everyone'];
+        document.getElementById('names').innerHTML = names.map(name => 
+            `<p style="color: #${Math.floor(Math.random()*16777215).toString(16)}">❤️ ${name}</p>`
+        ).join('');
+    </script>
+</body>
+</html>
