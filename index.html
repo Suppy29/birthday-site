@@ -3,184 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suprith Jain | Gratitude Experience</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Suprith Jain's Cosmic Birthday Experience</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.10.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #2A2356;
-            --secondary: #F4ABAA;
-            --accent: #FFD700;
-            --glass: rgba(255, 255, 255, 0.05);
+        /* Advanced 3D Scene Container */
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* Cosmic Timeline */
+        .timeline-wrapper {
+            position: relative;
+            min-height: 200vh;
+            padding: 10rem 0;
         }
 
-        body {
-            background: linear-gradient(45deg, var(--primary), #1A172B);
-            color: #fff;
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            overflow-x: hidden;
+        .timeline {
+            display: grid;
+            grid-auto-flow: column;
+            grid-auto-columns: 100vw;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-x: scroll;
+            scroll-snap-type: x mandatory;
         }
 
-        .hero {
+        .timeline-item {
+            scroll-snap-align: center;
+            width: 100vw;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            position: relative;
-            overflow: hidden;
+            perspective: 1000px;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
-            opacity: 0.1;
-            animation: pulse 8s infinite;
-        }
-
-        .name-title {
-            text-align: center;
-            z-index: 2;
-            backdrop-filter: blur(20px);
-            padding: 2rem;
-            border-radius: 20px;
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 0 50px rgba(244, 171, 170, 0.2);
-        }
-
-        .name-title h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            background: linear-gradient(45deg, #fff, var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-
-        .messages-container {
-            padding: 5rem 2rem;
-            display: grid;
-            gap: 3rem;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .message-card {
-            background: var(--glass);
-            backdrop-filter: blur(10px);
-            padding: 2rem;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transform: translateY(50px);
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-
-        .message-card.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); }
-            50% { transform: translate(-50%, -50%) scale(1.2); }
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px rgba(244, 171, 170, 0.5); }
-            to { text-shadow: 0 0 30px rgba(244, 171, 170, 0.8); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .name-title h1 { font-size: 2.5rem; }
-            .messages-container { padding: 3rem 1rem; }
-        }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--primary); }
-        ::-webkit-scrollbar-thumb { 
-            background: var(--secondary);
-            border-radius: 4px;
-        }
+        /* ... (Keep previous styles) ... */
     </style>
 </head>
 <body>
-    <section class="hero">
-        <div class="name-title">
-            <h1>Suprith Jain</h1>
-            <p class="tagline">Grateful Heart, Blessed Soul</p>
-            <button class="cta" onclick="startExperience()">Begin Gratitude Journey</button>
+    <div id="three-container"></div>
+    
+    <!-- Music Control -->
+    <div class="music-control">
+        <audio id="bg-music" loop>
+            <source src="https://assets.mixkit.co/music/preview/mixkit-chill-abstract-loop-229.mp3" type="audio/mpeg">
+        </audio>
+        <button id="music-toggle" class="glow-button">♫</button>
+    </div>
+
+    <!-- 3D Scene Script -->
+    <script>
+        // Initialize Three.js Scene
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('three-container').appendChild(renderer.domElement);
+
+        // Floating Balloons
+        const balloons = [];
+        const balloonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const balloonMaterials = [
+            new THREE.MeshPhongMaterial({ color: 0xff0000 }),
+            new THREE.MeshPhongMaterial({ color: 0x00ff00 }),
+            new THREE.MeshPhongMaterial({ color: 0x0000ff })
+        ];
+
+        for(let i = 0; i < 15; i++) {
+            const balloon = new THREE.Mesh(balloonGeometry, balloonMaterials[i%3]);
+            balloon.position.set(
+                Math.random() * 10 - 5,
+                Math.random() * 10 - 5,
+                Math.random() * 10 - 5
+            );
+            scene.add(balloon);
+            balloons.push(balloon);
+        }
+
+        // Neon Nameplate
+        const loader = new THREE.FontLoader();
+        loader.load('https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/helvetiker_regular.typeface.json', (font) => {
+            const textGeometry = new THREE.TextGeometry("Suprith's Birthday", {
+                font: font,
+                size: 0.5,
+                height: 0.2
+            });
+            const textMaterial = new THREE.MeshPhongMaterial({ color: 0x00ffff, emissive: 0x00ffff });
+            const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+            textMesh.position.set(-3, 2, -5);
+            scene.add(textMesh);
+        });
+
+        // Animation Loop
+        function animate() {
+            requestAnimationFrame(animate);
+            balloons.forEach((balloon, index) => {
+                balloon.rotation.y += 0.01;
+                balloon.position.y += Math.sin(Date.now() * 0.001 + index) * 0.005;
+            });
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+
+    <!-- Personalized Messages -->
+    <div class="ai-messages">
+        <div id="message-container"></div>
+    </div>
+
+    <script>
+        // AI Message Generator
+        const messages = [
+            "Suprith is touched by your warm wishes...",
+            "Your kindness fuels cosmic celebrations...",
+            "This moment sparkles brighter because of you..."
+        ];
+
+        const typed = new Typed('#message-container', {
+            strings: messages,
+            typeSpeed: 50,
+            backSpeed: 30,
+            loop: true,
+            smartBackspace: true
+        });
+    </script>
+
+    <!-- Timeline Section -->
+    <section class="timeline-wrapper">
+        <div class="timeline">
+            <div class="timeline-item" data-year="2024">
+                <div class="timeline-content">
+                    <h3>Milestone Achievement</h3>
+                    <p>Completed massive birthday celebration project</p>
+                </div>
+            </div>
+            <!-- Add more timeline items -->
         </div>
     </section>
 
-    <section class="messages-container">
-        <article class="message-card">
-            <h2>Your Love Illuminates My World</h2>
-            <p>To my dearest friends and family, your beautiful wishes have transformed this birthday into a celestial celebration...</p>
-        </article>
-
-        <article class="message-card">
-            <h2>Moments to Cherish</h2>
-            <div class="timeline">
-                <div class="timeline-event">
-                    <div class="timeline-dot"></div>
-                    <p class="timeline-text">Midnight Wishes</p>
-                </div>
-                <!-- Add more timeline events -->
-            </div>
-        </article>
-    </section>
-
+    <!-- Music Control Script -->
     <script>
-        // Intersection Observer for scroll animations
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.1 });
+        const music = document.getElementById('bg-music');
+        const toggleBtn = document.getElementById('music-toggle');
+        let isPlaying = false;
 
-        document.querySelectorAll('.message-card').forEach(card => {
-            observer.observe(card);
+        toggleBtn.addEventListener('click', () => {
+            isPlaying ? music.pause() : music.play();
+            isPlaying = !isPlaying;
+            toggleBtn.classList.toggle('active');
         });
 
-        // Confetti Symphony
-        function startExperience() {
-            const duration = 5000;
-            const defaults = { startVelocity: 30, spread: 360, ticks: 60 };
-
-            function shoot() {
-                confetti({
-                    ...defaults,
-                    particleCount: 150,
-                    origin: { x: Math.random(), y: Math.random() - 0.2 }
-                });
-            }
-
-            Array.from({ length: 50 }).forEach((_, i) => {
-                setTimeout(shoot, i * duration / 50);
-            });
-        }
-
-        // Smooth Scroll
-        window.addEventListener('scroll', () => {
-            document.documentElement.style.setProperty('--scroll', window.pageYOffset / 
-                (document.documentElement.scrollHeight - window.innerHeight));
-        }, false);
+        // Auto-play with fade
+        music.volume = 0;
+        music.play().then(() => {
+            gsap.to(music, { duration: 2, volume: 0.3 });
+            isPlaying = true;
+        });
     </script>
 </body>
 </html>
