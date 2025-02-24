@@ -1,78 +1,186 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Special Thanks! 🎉</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suprith Jain | Gratitude Experience</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #2A2356;
+            --secondary: #F4ABAA;
+            --accent: #FFD700;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: #000;
+            background: linear-gradient(45deg, var(--primary), #1A172B);
             color: #fff;
-            text-align: center;
-            font-family: Arial;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
             overflow: hidden;
         }
-        .hidden { opacity: 0; transform: translateY(20px); }
-        .heart { 
+
+        .hero::before {
+            content: '';
             position: absolute;
-            animation: float 3s infinite;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--secondary) 0%, transparent 70%);
+            opacity: 0.1;
+            animation: pulse 8s infinite;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+
+        .name-title {
+            text-align: center;
+            z-index: 2;
+            backdrop-filter: blur(20px);
+            padding: 2rem;
+            border-radius: 20px;
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 50px rgba(244, 171, 170, 0.2);
+        }
+
+        .name-title h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            background: linear-gradient(45deg, #fff, var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .messages-container {
+            padding: 5rem 2rem;
+            display: grid;
+            gap: 3rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .message-card {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(50px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .message-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.2); }
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(244, 171, 170, 0.5); }
+            to { text-shadow: 0 0 30px rgba(244, 171, 170, 0.8); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .name-title h1 { font-size: 2.5rem; }
+            .messages-container { padding: 3rem 1rem; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--primary); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--secondary);
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div id="content">
-        <h1 class="hidden">🎂 Thank You All! 🎂</h1>
-        <p class="hidden">Your wishes made my birthday special!</p>
-        <div id="names"></div>
-        <button onclick="startSurprise()" class="hidden">Click for Magic! ✨</button>
-    </div>
+    <section class="hero">
+        <div class="name-title">
+            <h1>Suprith Jain</h1>
+            <p class="tagline">Grateful Heart, Blessed Soul</p>
+            <button class="cta" onclick="startExperience()">Begin Gratitude Journey</button>
+        </div>
+    </section>
+
+    <section class="messages-container">
+        <article class="message-card">
+            <h2>Your Love Illuminates My World</h2>
+            <p>To my dearest friends and family, your beautiful wishes have transformed this birthday into a celestial celebration...</p>
+        </article>
+
+        <article class="message-card">
+            <h2>Moments to Cherish</h2>
+            <div class="timeline">
+                <div class="timeline-event">
+                    <div class="timeline-dot"></div>
+                    <p class="timeline-text">Midnight Wishes</p>
+                </div>
+                <!-- Add more timeline events -->
+            </div>
+        </article>
+    </section>
 
     <script>
-        // Animated entrance
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.querySelectorAll('.hidden').forEach(el => {
-                    el.style.opacity = 1;
-                    el.style.transform = 'translateY(0)';
-                });
-            }, 1000);
+        // Intersection Observer for scroll animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if(entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.message-card').forEach(card => {
+            observer.observe(card);
         });
 
-        // Confetti surprise
-        function startSurprise() {
-            const count = 200;
-            const defaults = { origin: { y: 0.7 } };
+        // Confetti Symphony
+        function startExperience() {
+            const duration = 5000;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60 };
 
-            function fire(particleRatio, opts) {
-                confetti(Object.assign({}, defaults, opts, {
-                    particleCount: Math.floor(count * particleRatio)
-                }));
+            function shoot() {
+                confetti({
+                    ...defaults,
+                    particleCount: 150,
+                    origin: { x: Math.random(), y: Math.random() - 0.2 }
+                });
             }
 
-            fire(0.25, { spread: 26, startVelocity: 55 });
-            fire(0.2, { spread: 60 });
-            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
-            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
-            
-            // Add floating hearts
-            setInterval(() => {
-                const heart = document.createElement('div');
-                heart.innerHTML = '❤️';
-                heart.className = 'heart';
-                heart.style.left = Math.random() * 100 + '%';
-                document.body.appendChild(heart);
-                setTimeout(() => heart.remove(), 3000);
-            }, 300);
+            Array.from({ length: 50 }).forEach((_, i) => {
+                setTimeout(shoot, i * duration / 50);
+            });
         }
 
-        // Add names (customize these)
-        const names = ['Bestie 1', 'Bestie 2', 'Family', 'Everyone'];
-        document.getElementById('names').innerHTML = names.map(name => 
-            `<p style="color: #${Math.floor(Math.random()*16777215).toString(16)}">❤️ ${name}</p>`
-        ).join('');
+        // Smooth Scroll
+        window.addEventListener('scroll', () => {
+            document.documentElement.style.setProperty('--scroll', window.pageYOffset / 
+                (document.documentElement.scrollHeight - window.innerHeight));
+        }, false);
     </script>
 </body>
 </html>
